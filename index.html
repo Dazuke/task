@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dika Track Mentari</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div>
+            <p class="small-title">STUDENT TASK TRACKER</p>
+            <h1>Dika Track Mentari</h1>
+            <p class="subtitle">
+                Jangan sampai tugas kuliah kelewat.
+            </p>
+        </div>
+
+        <div class="week-box">
+            <span>MINGGU</span>
+            <strong id="weekNumber">-</strong>
+        </div>
+    </header>
+
+
+    <main class="container">
+
+        <!-- INFO MINGGU -->
+        <section class="top-info">
+
+            <div class="info-card">
+                <span>📅 Periode</span>
+                <strong id="weekPeriod">-</strong>
+            </div>
+
+            <div class="info-card">
+                <span>⏳ Menuju Reset</span>
+                <strong id="countdown">-</strong>
+            </div>
+
+            <div class="info-card">
+                <span>📚 Mata Kuliah</span>
+                <strong>8 Mapel</strong>
+            </div>
+
+        </section>
+
+
+        <!-- TOTAL PROGRESS -->
+        <section class="overall-card">
+
+            <div class="overall-top">
+                <div>
+                    <p>Progress Minggu Ini</p>
+                    <h2 id="overallPercent">0%</h2>
+                </div>
+
+                <div class="overall-status" id="overallStatus">
+                    Belum mulai
+                </div>
+            </div>
+
+            <div class="progress">
+                <div
+                    class="progress-fill"
+                    id="overallProgress">
+                </div>
+            </div>
+
+            <p class="task-summary" id="taskSummary">
+                0 dari 0 tugas selesai
+            </p>
+
+        </section>
+
+
+        <!-- WARNING -->
+        <div class="warning hidden" id="warningBox">
+            ⚠️ Masih ada tugas yang belum selesai minggu ini.
+        </div>
+
+
+        <!-- DAFTAR MAPEL -->
+        <section>
+
+            <div class="section-title">
+                <div>
+                    <p class="small-title">TRACKER</p>
+                    <h2>Daftar Mata Kuliah</h2>
+                </div>
+
+                <button id="resetButton" class="reset-btn">
+                    Reset Data
+                </button>
+            </div>
+
+            <div id="subjectsContainer" class="subjects">
+                <!-- Diisi otomatis oleh JavaScript -->
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        <p>Dika Track Mentari © 2026</p>
+        <span>Built for surviving kuliah online 😭</span>
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
