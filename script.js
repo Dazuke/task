@@ -1,271 +1,197 @@
-/* =========================================
-   DIKA TRACK MENTARI
-   ========================================= */
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    collection,
+    onSnapshot,
+    doc,
+    updateDoc,
+    setDoc,
+    deleteDoc
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 
 /* =========================================
-   DATA MATA KULIAH
+   FIREBASE CONFIG
    ========================================= */
 
-const subjects = [
+const firebaseConfig = {
 
-    {
-        id: "algoritma",
-        name: "Algoritma dan Pemrograman",
-        sks: 3
-    },
+    apiKey: "ISI_FIREBASE_API_KEY",
 
-    {
-        id: "aljabar",
-        name: "Aljabar Linier dan Matriks",
-        sks: 3
-    },
+    authDomain:
+        "PROJECT-ID.firebaseapp.com",
 
-    {
-        id: "basisdata",
-        name: "Sistem Basis Data",
-        sks: 3
-    },
+    projectId:
+        "PROJECT-ID",
 
-    {
-        id: "ai",
-        name: "Pengantar Kecerdasan Buatan",
-        sks: 3
-    },
+    storageBucket:
+        "PROJECT-ID.firebasestorage.app",
 
-    {
-        id: "kewarganegaraan",
-        name: "Kewarganegaraan",
-        sks: 2
-    },
+    messagingSenderId:
+        "ISI_SENDER_ID",
 
-    {
-        id: "psi",
-        name: "Pengantar Sistem Informasi",
-        sks: 2
-    },
-
-    {
-        id: "english",
-        name: "Basic English",
-        sks: 2
-    },
-
-    {
-        id: "bahasa",
-        name: "Bahasa Indonesia",
-        sks: 2
-    }
-
-];
-
-
-/* =========================================
-   TUGAS KHUSUS MINGGU INI
-   5 - 10 OKTOBER 2026
-   ========================================= */
-
-const currentWeekTasks = {
-
-    algoritma: [
-        "P8: Pretest",
-        "P8: Postest",
-        "P9: Pretest",
-        "P9: Postest",
-        "Laporan P7"
-    ],
-
-    aljabar: [
-        "P8: Pretest",
-        "P8: Postest",
-        "P9: Pretest",
-        "P9: Postest"
-    ],
-
-    basisdata: [
-        "P8: Pretest",
-        "P8: Postest",
-        "P9: Pretest",
-        "P9: Postest",
-        "Buat database menggunakan XAMPP/Laragon"
-    ],
-
-    ai: [
-        "P8: Pretest",
-        "P8: Postest",
-        "P9: Pretest",
-        "P9: Postest",
-        "Analisis kasus"
-    ],
-
-    kewarganegaraan: [
-        "Pretest",
-        "Fordis",
-        "Postest",
-        "Kuesioner"
-    ],
-
-    psi: [
-        "Pretest",
-        "Fordis",
-        "Postest",
-        "Kuesioner"
-    ],
-
-    english: [
-        "Pretest",
-        "Penugasan",
-        "Fordis",
-        "Postest",
-        "Kuesioner"
-    ],
-
-    bahasa: [
-        "Pretest",
-        "Fordis",
-        "Postest",
-        "Kuesioner"
-    ]
+    appId:
+        "ISI_APP_ID"
 
 };
 
 
-/* =========================================
-   TANGGAL AWAL KULIAH
-   ========================================= */
+const app =
+    initializeApp(firebaseConfig);
 
-/*
-   Minggu pertama dimulai dari
-   Senin 17 Agustus 2026.
 
-   Jadi:
-   Minggu 1 = 17-22 Agustus
-   Minggu 2 = 24-29 Agustus
-   ...
-   Minggu 8 = 28 Sep-3 Okt
-   Minggu 9 = 5-10 Okt
-*/
+const auth =
+    getAuth(app);
 
-const firstWeekDate = new Date("2026-08-17T00:00:00");
+
+const db =
+    getFirestore(app);
 
 
 /* =========================================
-   STORAGE
+   STATE
    ========================================= */
 
-const STORAGE_KEY = "dikaTrackMentari";
+let currentUser = null;
+
+let subjectsData = [];
+
+let tasksData = {};
 
 
-function getStorage() {
+/* =========================================
+   ELEMENTS
+   ========================================= */
 
-    const data = localStorage.getItem(STORAGE_KEY);
+const loginScreen =
+    document.getElementById("loginScreen");
 
-    if (!data) {
-        return {};
+const appScreen =
+    document.getElementById("app");
+
+const emailInput =
+    document.getElementById("emailInput");
+
+const passwordInput =
+    document.getElementById("passwordInput");
+
+const loginBtn =
+    document.getElementById("loginBtn");
+
+const loginError =
+    document.getElementById("loginError");
+
+
+/* =========================================
+   LOGIN
+   ========================================= */
+
+loginBtn.addEventListener(
+    "click",
+    async () => {
+
+        loginError.textContent = "";
+
+        try {
+
+            await signInWithEmailAndPassword(
+                auth,
+                emailInput.value.trim(),
+                passwordInput.value
+            );
+
+        } catch (error) {
+
+            loginError.textContent =
+                "Email atau password salah.";
+
+            console.error(error);
+
+        }
+
     }
+);
 
-    try {
-        return JSON.parse(data);
-    } catch {
-        return {};
+
+/* =========================================
+   AUTH STATE
+   ========================================= */
+
+onAuthStateChanged(
+    auth,
+    async user => {
+
+        if (user) {
+
+            currentUser = user;
+
+            loginScreen.classList.add(
+                "hidden"
+            );
+
+            appScreen.classList.remove(
+                "hidden"
+            );
+
+
+            await loadData();
+
+        } else {
+
+            currentUser = null;
+
+            appScreen.classList.add(
+                "hidden"
+            );
+
+            loginScreen.classList.remove(
+                "hidden"
+            );
+
+        }
+
     }
-
-}
-
-
-function saveStorage(data) {
-
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(data)
-    );
-
-}
+);
 
 
 /* =========================================
-   HITUNG MINGGU
+   LOAD SUBJECTS
    ========================================= */
 
-function getWeekNumber(date = new Date()) {
+async function loadData() {
 
-    const current = new Date(date);
-
-    current.setHours(0, 0, 0, 0);
-
-    /*
-       Cari Senin dari minggu sekarang
-    */
-
-    const day = current.getDay();
-
-    const diff = day === 0 ? -6 : 1 - day;
-
-    current.setDate(current.getDate() + diff);
+    const subjectsRef =
+        collection(
+            db,
+            "subjects"
+        );
 
 
-    const first = new Date(firstWeekDate);
+    onSnapshot(
+        subjectsRef,
+        snapshot => {
 
-    first.setHours(0, 0, 0, 0);
-
-
-    const difference =
-        current.getTime() - first.getTime();
-
-
-    const week =
-        Math.floor(
-            difference / (7 * 24 * 60 * 60 * 1000)
-        ) + 1;
+            subjectsData =
+                snapshot.docs.map(
+                    item => ({
+                        id: item.id,
+                        ...item.data()
+                    })
+                );
 
 
-    return Math.max(1, week);
+            renderSubjects();
 
-}
-
-
-/* =========================================
-   INFO MINGGU
-   ========================================= */
-
-function getWeekDates(date = new Date()) {
-
-    const current = new Date(date);
-
-    current.setHours(0, 0, 0, 0);
-
-    const day = current.getDay();
-
-    const diff = day === 0 ? -6 : 1 - day;
-
-    const monday = new Date(current);
-
-    monday.setDate(
-        current.getDate() + diff
-    );
-
-    const saturday = new Date(monday);
-
-    saturday.setDate(
-        monday.getDate() + 5
-    );
-
-    return {
-        monday,
-        saturday
-    };
-
-}
-
-
-function formatDate(date) {
-
-    return date.toLocaleDateString(
-        "id-ID",
-        {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
         }
     );
 
@@ -273,14 +199,54 @@ function formatDate(date) {
 
 
 /* =========================================
-   KEY DATA
+   WEEK
    ========================================= */
+
+const firstWeek =
+    new Date(
+        "2026-08-17T00:00:00"
+    );
+
+
+function getWeekNumber() {
+
+    const now =
+        new Date();
+
+    const day =
+        now.getDay();
+
+    const monday =
+        new Date(now);
+
+    monday.setDate(
+        now.getDate() -
+        (day === 0 ? 6 : day - 1)
+    );
+
+    monday.setHours(
+        0, 0, 0, 0
+    );
+
+
+    const diff =
+        monday - firstWeek;
+
+
+    return Math.max(
+        1,
+        Math.floor(
+            diff /
+            (7 * 24 * 60 * 60 * 1000)
+        ) + 1
+    );
+
+}
+
 
 function getWeekKey() {
 
-    const week = getWeekNumber();
-
-    return `week-${week}`;
+    return `week-${getWeekNumber()}`;
 
 }
 
@@ -289,477 +255,597 @@ function getWeekKey() {
    RENDER
    ========================================= */
 
-function render() {
-
-    const week = getWeekNumber();
-
-    const dates = getWeekDates();
-
-    document.getElementById("weekNumber").textContent =
-        week;
-
-    document.getElementById("weekPeriod").textContent =
-        `${formatDate(dates.monday)} – ${formatDate(dates.saturday)}`;
-
-
-    renderSubjects();
-
-    updateOverallProgress();
-
-    updateCountdown();
-
-}
-
-
-/* =========================================
-   RENDER MAPEL
-   ========================================= */
-
 function renderSubjects() {
 
     const container =
-        document.getElementById("subjectsContainer");
+        document.getElementById(
+            "subjects"
+        );
+
 
     container.innerHTML = "";
 
-    const storage = getStorage();
-
-    const weekKey = getWeekKey();
-
-    if (!storage[weekKey]) {
-        storage[weekKey] = {};
-    }
-
-
-    subjects.forEach(subject => {
-
-        let tasks = currentWeekTasks[subject.id] || [];
-
-        const subjectData =
-            storage[weekKey][subject.id] || {};
-
-
-        if (!storage[weekKey][subject.id]) {
-
-            storage[weekKey][subject.id] = {};
-
-            tasks.forEach((task, index) => {
-
-                storage[weekKey][subject.id][index] = false;
-
-            });
-
-        }
-
-
-        const card =
-            document.createElement("div");
-
-        card.className = "subject-card";
-
-
-        const completed =
-            tasks.filter(
-                (_, index) =>
-                    subjectData[index] === true
-            ).length;
-
-
-        const percentage =
-            tasks.length === 0
-                ? 0
-                : Math.round(
-                    (completed / tasks.length) * 100
-                );
-
-
-        card.innerHTML = `
-
-            <div class="subject-head">
-
-                <h3 class="subject-name">
-                    ${subject.name}
-                </h3>
-
-                <span class="sks">
-                    ${subject.sks} SKS
-                </span>
-
-            </div>
-
-
-            <div class="subject-progress-info">
-
-                <span>
-                    ${completed}/${tasks.length} selesai
-                </span>
-
-                <span>
-                    ${percentage}%
-                </span>
-
-            </div>
-
-
-            <div class="subject-progress">
-
-                <div
-                    class="subject-progress-fill"
-                    style="width:${percentage}%">
-                </div>
-
-            </div>
-
-
-            <div class="task-list">
-
-                ${
-                    tasks.length
-                    ?
-                    tasks.map((task, index) => `
-
-                        <label
-                            class="task ${
-                                subjectData[index]
-                                    ? "done"
-                                    : ""
-                            }"
-                        >
-
-                            <input
-                                type="checkbox"
-                                data-subject="${subject.id}"
-                                data-index="${index}"
-                                ${
-                                    subjectData[index]
-                                        ? "checked"
-                                        : ""
-                                }
-                            >
-
-                            <span class="checkbox"></span>
-
-                            <span class="task-text">
-                                ${task}
-                            </span>
-
-                        </label>
-
-                    `).join("")
-
-                    :
-
-                    `
-                        <div class="empty">
-                            Tidak ada tugas minggu ini.
-                        </div>
-                    `
-                }
-
-            </div>
-
-        `;
-
-
-        container.appendChild(card);
-
-    });
-
-
-    saveStorage(storage);
-
-
-    addCheckboxListeners();
-
-}
-
-
-/* =========================================
-   CHECKBOX
-   ========================================= */
-
-function addCheckboxListeners() {
-
-    const checkboxes =
-        document.querySelectorAll(
-            ".task input"
-        );
-
-
-    checkboxes.forEach(checkbox => {
-
-        checkbox.addEventListener(
-            "change",
-            function () {
-
-                const storage = getStorage();
-
-                const weekKey = getWeekKey();
-
-                const subject =
-                    this.dataset.subject;
-
-                const index =
-                    this.dataset.index;
-
-
-                if (!storage[weekKey]) {
-                    storage[weekKey] = {};
-                }
-
-
-                if (!storage[weekKey][subject]) {
-                    storage[weekKey][subject] = {};
-                }
-
-
-                storage[weekKey][subject][index] =
-                    this.checked;
-
-
-                saveStorage(storage);
-
-
-                render();
-
-            }
-        );
-
-    });
-
-}
-
-
-/* =========================================
-   OVERALL PROGRESS
-   ========================================= */
-
-function updateOverallProgress() {
-
-    const storage = getStorage();
-
-    const weekKey = getWeekKey();
 
     let total = 0;
+
     let completed = 0;
 
 
-    subjects.forEach(subject => {
+    subjectsData
+        .sort(
+            (a, b) =>
+                (a.order || 0) -
+                (b.order || 0)
+        )
+        .forEach(subject => {
 
-        const tasks =
-            currentWeekTasks[subject.id] || [];
+            const tasks =
+                subject.tasks?.[
+                    getWeekKey()
+                ] || [];
 
 
-        const subjectData =
-            storage[weekKey]?.[subject.id] || {};
+            const done =
+                tasks.filter(
+                    task => task.done
+                ).length;
 
 
-        total += tasks.length;
+            total += tasks.length;
+
+            completed += done;
 
 
-        tasks.forEach((_, index) => {
+            const percentage =
+                tasks.length
+                    ? Math.round(
+                        done /
+                        tasks.length *
+                        100
+                    )
+                    : 0;
 
-            if (subjectData[index] === true) {
-                completed++;
-            }
+
+            const card =
+                document.createElement(
+                    "article"
+                );
+
+
+            card.className =
+                "subject glass";
+
+
+            card.innerHTML = `
+
+                <div class="subject-header">
+
+                    <div class="subject-info">
+
+                        <div class="subject-icon">
+                            ${subject.icon || "📚"}
+                        </div>
+
+                        <div>
+
+                            <h3 class="subject-name">
+                                ${subject.name}
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <span class="sks">
+                        ${subject.sks} SKS
+                    </span>
+
+                </div>
+
+
+                <div class="subject-progress">
+
+                    <div class="progress-top">
+
+                        <span>
+                            ${done}/${tasks.length}
+                            selesai
+                        </span>
+
+                        <span>
+                            ${percentage}%
+                        </span>
+
+                    </div>
+
+
+                    <div class="progress-bar">
+
+                        <div
+                            class="progress-value"
+                            style="width:${percentage}%"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="tasks">
+
+                    <div class="tasks-inner">
+
+                        ${
+                            tasks.map(
+                                (task, index) => `
+
+                                <div
+                                    class="task ${
+                                        task.done
+                                            ? "done"
+                                            : ""
+                                    }"
+                                    data-subject="${subject.id}"
+                                    data-index="${index}"
+                                >
+
+                                    <span class="task-checkbox">
+                                        ${
+                                            task.done
+                                                ? "✓"
+                                                : ""
+                                        }
+                                    </span>
+
+                                    <span class="task-text">
+                                        ${task.name}
+                                    </span>
+
+                                </div>
+
+                            `
+                            ).join("")
+                        }
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            const header =
+                card.querySelector(
+                    ".subject-header"
+                );
+
+
+            header.addEventListener(
+                "click",
+                () => {
+
+                    card.classList.toggle(
+                        "open"
+                    );
+
+                }
+            );
+
+
+            card
+                .querySelectorAll(".task")
+                .forEach(task => {
+
+                    task.addEventListener(
+                        "click",
+                        event => {
+
+                            event.stopPropagation();
+
+                            toggleTask(
+                                task.dataset.subject,
+                                Number(
+                                    task.dataset.index
+                                )
+                            );
+
+                        }
+                    );
+
+                });
+
+
+            container.appendChild(card);
 
         });
 
-    });
 
+    updateOverall(
+        total,
+        completed
+    );
+
+}
+
+
+/* =========================================
+   TOGGLE TASK
+   ========================================= */
+
+async function toggleTask(
+    subjectId,
+    taskIndex
+) {
+
+    const subject =
+        subjectsData.find(
+            item =>
+                item.id === subjectId
+        );
+
+
+    if (!subject) {
+        return;
+    }
+
+
+    const tasks =
+        [
+            ...(subject.tasks?.[
+                getWeekKey()
+            ] || [])
+        ];
+
+
+    if (!tasks[taskIndex]) {
+        return;
+    }
+
+
+    tasks[taskIndex].done =
+        !tasks[taskIndex].done;
+
+
+    await updateDoc(
+        doc(
+            db,
+            "subjects",
+            subjectId
+        ),
+        {
+            [`tasks.${getWeekKey()}`]:
+                tasks
+        }
+    );
+
+}
+
+
+/* =========================================
+   OVERALL
+   ========================================= */
+
+function updateOverall(
+    total,
+    completed
+) {
 
     const percentage =
-        total === 0
-            ? 0
-            : Math.round(
-                (completed / total) * 100
-            );
+        total
+            ? Math.round(
+                completed /
+                total *
+                100
+            )
+            : 0;
 
 
     document.getElementById(
         "overallPercent"
-    ).textContent = `${percentage}%`;
-
-
-    document.getElementById(
-        "overallProgress"
-    ).style.width = `${percentage}%`;
-
-
-    document.getElementById(
-        "taskSummary"
     ).textContent =
-        `${completed} dari ${total} tugas selesai`;
+        `${percentage}%`;
 
 
-    const status =
-        document.getElementById(
-            "overallStatus"
-        );
+    document.getElementById(
+        "circleValue"
+    ).textContent =
+        `${percentage}%`;
 
 
-    if (percentage === 100) {
-
-        status.textContent = "✓ Semua selesai";
-
-    } else if (percentage >= 50) {
-
-        status.textContent = "Lumayan, lanjut 🔥";
-
-    } else if (percentage > 0) {
-
-        status.textContent = "Sedang berjalan";
-
-    } else {
-
-        status.textContent = "Belum mulai";
-
-    }
-
-
-    const warning =
-        document.getElementById(
-            "warningBox"
-        );
-
-
-    if (percentage < 100) {
-        warning.classList.remove("hidden");
-    } else {
-        warning.classList.add("hidden");
-    }
-
-}
-
-
-/* =========================================
-   COUNTDOWN SABTU
-   ========================================= */
-
-function updateCountdown() {
-
-    const now = new Date();
-
-    const dates = getWeekDates(now);
-
-    const resetDate = new Date(
-        dates.saturday
+    document.querySelector(
+        ".circle-progress"
+    ).style.setProperty(
+        "--progress",
+        `${percentage * 3.6}deg`
     );
 
-    /*
-       Reset dianggap mulai Sabtu 00:00
-    */
 
-    resetDate.setHours(0, 0, 0, 0);
-
-
-    let difference =
-        resetDate.getTime() -
-        now.getTime();
-
-
-    /*
-       Kalau sudah masuk Sabtu,
-       target diarahkan ke Sabtu berikutnya.
-    */
-
-    if (difference <= 0) {
-
-        resetDate.setDate(
-            resetDate.getDate() + 7
-        );
-
-        difference =
-            resetDate.getTime() -
-            now.getTime();
-
-    }
-
-
-    const days =
-        Math.floor(
-            difference /
-            (1000 * 60 * 60 * 24)
-        );
-
-
-    const hours =
-        Math.floor(
-            (difference %
-                (1000 * 60 * 60 * 24)) /
-            (1000 * 60 * 60)
-        );
-
-
-    const minutes =
-        Math.floor(
-            (difference %
-                (1000 * 60 * 60)) /
-            (1000 * 60)
-        );
+    document.getElementById(
+        "completedCount"
+    ).textContent =
+        completed;
 
 
     document.getElementById(
-        "countdown"
+        "remainingCount"
     ).textContent =
-        `${days}h ${hours}j ${minutes}m`;
+        total - completed;
 
 }
 
 
 /* =========================================
-   RESET DATA
+   THEME
    ========================================= */
 
-document
-    .getElementById("resetButton")
-    .addEventListener(
-        "click",
-        function () {
+const themeBtn =
+    document.getElementById(
+        "themeBtn"
+    );
 
-            const yakin =
-                confirm(
-                    "Hapus semua progress minggu ini?"
+const themePanel =
+    document.getElementById(
+        "themePanel"
+    );
+
+const closeTheme =
+    document.getElementById(
+        "closeTheme"
+    );
+
+
+themeBtn.addEventListener(
+    "click",
+    () => {
+
+        themePanel.classList.toggle(
+            "hidden"
+        );
+
+    }
+);
+
+
+closeTheme.addEventListener(
+    "click",
+    () => {
+
+        themePanel.classList.add(
+            "hidden"
+        );
+
+    }
+);
+
+
+document
+    .querySelectorAll(
+        ".theme-option"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const theme =
+                    button.dataset.theme;
+
+
+                document.body.classList.remove(
+                    "light",
+                    "amoled"
                 );
 
 
-            if (!yakin) {
-                return;
+                if (
+                    theme === "light"
+                ) {
+
+                    document.body.classList.add(
+                        "light"
+                    );
+
+                }
+
+
+                if (
+                    theme === "amoled"
+                ) {
+
+                    document.body.classList.add(
+                        "amoled"
+                    );
+
+                }
+
+
+                localStorage.setItem(
+                    "theme",
+                    theme
+                );
+
             }
+        );
+
+    });
 
 
-            const storage = getStorage();
+/* LOAD THEME */
 
-            const weekKey = getWeekKey();
-
-
-            if (storage[weekKey]) {
-
-                delete storage[weekKey];
-
-            }
+const savedTheme =
+    localStorage.getItem(
+        "theme"
+    );
 
 
-            saveStorage(storage);
+if (
+    savedTheme === "light" ||
+    savedTheme === "amoled"
+) {
 
-            render();
+    document.body.classList.add(
+        savedTheme
+    );
+
+}
+
+
+/* =========================================
+   WALLPAPER
+   ========================================= */
+
+const wallpaperInput =
+    document.getElementById(
+        "wallpaperInput"
+    );
+
+
+const savedWallpaper =
+    localStorage.getItem(
+        "wallpaper"
+    );
+
+
+if (savedWallpaper) {
+
+    document.querySelector(
+        ".background"
+    ).style.backgroundImage =
+        `url(${savedWallpaper})`;
+
+}
+
+
+wallpaperInput.addEventListener(
+    "change",
+    event => {
+
+        const file =
+            event.target.files[0];
+
+
+        if (!file) {
+            return;
+        }
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function () {
+
+                const result =
+                    reader.result;
+
+
+                localStorage.setItem(
+                    "wallpaper",
+                    result
+                );
+
+
+                document.querySelector(
+                    ".background"
+                ).style.backgroundImage =
+                    `url(${result})`;
+
+            };
+
+
+        reader.readAsDataURL(
+            file
+        );
+
+    }
+);
+
+
+/* =========================================
+   LOGOUT
+   ========================================= */
+
+document
+    .getElementById(
+        "logoutBtn"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            signOut(auth);
 
         }
     );
 
 
 /* =========================================
-   AUTO UPDATE COUNTDOWN
+   WEEK DISPLAY
    ========================================= */
 
-setInterval(
-    updateCountdown,
-    60 * 1000
-);
+function updateWeekDisplay() {
+
+    const week =
+        getWeekNumber();
 
 
-/* =========================================
-   START
-   ========================================= */
+    document.getElementById(
+        "weekNumber"
+    ).textContent =
+        String(week).padStart(
+            2,
+            "0"
+        );
 
-render();
+
+    const now =
+        new Date();
+
+
+    const day =
+        now.getDay();
+
+
+    const monday =
+        new Date(now);
+
+
+    monday.setDate(
+        now.getDate() -
+        (day === 0 ? 6 : day - 1)
+    );
+
+
+    const saturday =
+        new Date(monday);
+
+
+    saturday.setDate(
+        monday.getDate() + 5
+    );
+
+
+    const format =
+        date =>
+            date.toLocaleDateString(
+                "en-GB",
+                {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+
+
+    document.getElementById(
+        "weekPeriod"
+    ).textContent =
+        `${format(monday)} — ${format(saturday)}`;
+
+}
+
+
+updateWeekDisplay();
