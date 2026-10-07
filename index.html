@@ -4,116 +4,309 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Dika Track Mentari</title>
+    <title>CLASS 01SIFE002</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <header class="header">
-        <div>
-            <p class="small-title">STUDENT TASK TRACKER</p>
-            <h1>Dika Track Mentari</h1>
-            <p class="subtitle">
-                Jangan sampai tugas kuliah kelewat.
-            </p>
-        </div>
+    <div class="background"></div>
 
-        <div class="week-box">
-            <span>MINGGU</span>
-            <strong id="weekNumber">-</strong>
-        </div>
-    </header>
+    <!-- LOGIN -->
 
+    <section id="loginScreen" class="login-screen">
 
-    <main class="container">
+        <div class="login-card glass">
 
-        <!-- INFO MINGGU -->
-        <section class="top-info">
-
-            <div class="info-card">
-                <span>📅 Periode</span>
-                <strong id="weekPeriod">-</strong>
+            <div class="login-logo">
+                01
             </div>
 
-            <div class="info-card">
-                <span>⏳ Menuju Reset</span>
-                <strong id="countdown">-</strong>
-            </div>
-
-            <div class="info-card">
-                <span>📚 Mata Kuliah</span>
-                <strong>8 Mapel</strong>
-            </div>
-
-        </section>
-
-
-        <!-- TOTAL PROGRESS -->
-        <section class="overall-card">
-
-            <div class="overall-top">
-                <div>
-                    <p>Progress Minggu Ini</p>
-                    <h2 id="overallPercent">0%</h2>
-                </div>
-
-                <div class="overall-status" id="overallStatus">
-                    Belum mulai
-                </div>
-            </div>
-
-            <div class="progress">
-                <div
-                    class="progress-fill"
-                    id="overallProgress">
-                </div>
-            </div>
-
-            <p class="task-summary" id="taskSummary">
-                0 dari 0 tugas selesai
+            <p class="eyebrow">
+                CLASS 01SIFE002
             </p>
 
-        </section>
+            <h1>
+                Welcome
+            </h1>
 
+            <p class="login-desc">
+                Login untuk mengakses tracker kelas.
+            </p>
 
-        <!-- WARNING -->
-        <div class="warning hidden" id="warningBox">
-            ⚠️ Masih ada tugas yang belum selesai minggu ini.
+            <input
+                id="emailInput"
+                type="email"
+                placeholder="Email"
+            >
+
+            <input
+                id="passwordInput"
+                type="password"
+                placeholder="Password"
+            >
+
+            <button
+                id="loginBtn"
+                class="primary-btn"
+            >
+                Login
+            </button>
+
+            <p id="loginError" class="error-text"></p>
+
         </div>
 
+    </section>
 
-        <!-- DAFTAR MAPEL -->
-        <section>
 
-            <div class="section-title">
-                <div>
-                    <p class="small-title">TRACKER</p>
-                    <h2>Daftar Mata Kuliah</h2>
-                </div>
+    <!-- APP -->
 
-                <button id="resetButton" class="reset-btn">
-                    Reset Data
+    <div id="app" class="app hidden">
+
+        <header class="header">
+
+            <div>
+
+                <p class="class-name">
+                    CLASS 01SIFE002
+                </p>
+
+                <p class="author">
+                    by Dika
+                </p>
+
+            </div>
+
+
+            <div class="header-actions">
+
+                <button
+                    id="themeBtn"
+                    class="icon-btn"
+                    title="Theme"
+                >
+                    ◐
                 </button>
+
+                <button
+                    id="logoutBtn"
+                    class="icon-btn"
+                    title="Logout"
+                >
+                    ↪
+                </button>
+
             </div>
 
-            <div id="subjectsContainer" class="subjects">
-                <!-- Diisi otomatis oleh JavaScript -->
+        </header>
+
+
+        <main class="container">
+
+
+            <!-- HERO -->
+
+            <section class="hero glass">
+
+                <div>
+
+                    <p class="eyebrow">
+                        WEEK <span id="weekNumber">--</span>
+                    </p>
+
+                    <h1 id="weekPeriod">
+                        --
+                    </h1>
+
+                    <p id="countdown">
+                        --
+                    </p>
+
+                </div>
+
+
+                <div class="hero-progress">
+
+                    <span id="overallPercent">
+                        0%
+                    </span>
+
+                    <div class="circle-progress">
+                        <div id="circleValue">
+                            0%
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- THEME PANEL -->
+
+            <section
+                id="themePanel"
+                class="theme-panel glass hidden"
+            >
+
+                <div class="theme-title">
+                    <strong>Appearance</strong>
+
+                    <button
+                        id="closeTheme"
+                        class="close-btn"
+                    >
+                        ×
+                    </button>
+                </div>
+
+
+                <div class="theme-options">
+
+                    <button
+                        data-theme="dark"
+                        class="theme-option"
+                    >
+                        <span class="theme-preview dark-preview"></span>
+                        Dark
+                    </button>
+
+                    <button
+                        data-theme="light"
+                        class="theme-option"
+                    >
+                        <span class="theme-preview light-preview"></span>
+                        Light
+                    </button>
+
+                    <button
+                        data-theme="amoled"
+                        class="theme-option"
+                    >
+                        <span class="theme-preview amoled-preview"></span>
+                        AMOLED
+                    </button>
+
+                </div>
+
+
+                <label class="wallpaper-btn">
+
+                    🖼 Choose background
+
+                    <input
+                        id="wallpaperInput"
+                        type="file"
+                        accept="image/*"
+                        hidden
+                    >
+
+                </label>
+
+            </section>
+
+
+            <!-- SUMMARY -->
+
+            <section class="summary-grid">
+
+                <div class="glass summary-card">
+
+                    <span>
+                        Completed
+                    </span>
+
+                    <strong id="completedCount">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="glass summary-card">
+
+                    <span>
+                        Remaining
+                    </span>
+
+                    <strong id="remainingCount">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="glass summary-card">
+
+                    <span>
+                        Subjects
+                    </span>
+
+                    <strong>
+                        8
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <!-- SUBJECTS -->
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="eyebrow">
+                        THIS WEEK
+                    </p>
+
+                    <h2>
+                        Mata Kuliah
+                    </h2>
+                </div>
+
+
+                <button
+                    id="manageBtn"
+                    class="manage-btn hidden"
+                >
+                    Manage
+                </button>
+
             </div>
 
-        </section>
 
-    </main>
-
-
-    <footer>
-        <p>Dika Track Mentari © 2026</p>
-        <span>Built for surviving kuliah online 😭</span>
-    </footer>
+            <section
+                id="subjects"
+                class="subjects"
+            >
+                <!-- JS -->
+            </section>
 
 
-    <script src="script.js"></script>
+        </main>
+
+
+        <footer>
+
+            <p>
+                CLASS 01SIFE002
+            </p>
+
+            <span>
+                by Dika
+            </span>
+
+        </footer>
+
+    </div>
+
+
+    <!-- FIREBASE -->
+
+    <script type="module" src="script.js"></script>
 
 </body>
 </html>
