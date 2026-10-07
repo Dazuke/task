@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CLASS 01SIFE002</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= LOGIN ================= -->
+
+    <section id="authScreen" class="auth-screen">
+
+        <div class="auth-card">
+
+            <div class="brand">
+                <h1>CLASS 01SIFE002</h1>
+                <span>by Dika</span>
+            </div>
+
+            <!-- LOGIN -->
+
+            <div id="loginForm">
+
+                <div class="auth-title">
+                    <h2>Welcome back.</h2>
+                    <p>Login untuk melanjutkan.</p>
+                </div>
+
+                <label>NIM</label>
+                <input
+                    type="text"
+                    id="loginNim"
+                    placeholder="Masukkan NIM"
+                    autocomplete="username"
+                >
+
+                <label>Password</label>
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Masukkan password"
+                    autocomplete="current-password"
+                >
+
+                <button id="loginBtn" class="primary-btn">
+                    Login
+                </button>
+
+                <p class="switch-text">
+                    Belum punya akun?
+                    <button id="showRegisterBtn" class="text-btn">
+                        Create Account
+                    </button>
+                </p>
+
+            </div>
+
+
+            <!-- REGISTER -->
+
+            <div id="registerForm" class="hidden">
+
+                <div class="auth-title">
+                    <h2>Create account.</h2>
+                    <p>Buat akun untuk menyimpan progress kamu.</p>
+                </div>
+
+                <label>Nama</label>
+                <input
+                    type="text"
+                    id="registerName"
+                    placeholder="Nama lengkap"
+                >
+
+                <label>NIM</label>
+                <input
+                    type="text"
+                    id="registerNim"
+                    placeholder="Contoh: 241011700123"
+                >
+
+                <label>Password</label>
+                <input
+                    type="password"
+                    id="registerPassword"
+                    placeholder="Minimal 6 karakter"
+                >
+
+                <label>Konfirmasi Password</label>
+                <input
+                    type="password"
+                    id="registerPasswordConfirm"
+                    placeholder="Ulangi password"
+                >
+
+                <label>WhatsApp <span>(opsional)</span></label>
+                <input
+                    type="tel"
+                    id="registerWhatsapp"
+                    placeholder="628xxxxxxxxxx"
+                >
+
+                <label class="check-row">
+                    <input
+                        type="checkbox"
+                        id="registerReminder"
+                    >
+
+                    <span>
+                        Aktifkan reminder WhatsApp
+                    </span>
+                </label>
+
+                <button id="registerBtn" class="primary-btn">
+                    Create Account
+                </button>
+
+                <p class="switch-text">
+                    Sudah punya akun?
+                    <button id="showLoginBtn" class="text-btn">
+                        Login
+                    </button>
+                </p>
+
+            </div>
+
+            <div id="authMessage" class="auth-message"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= APP ================= -->
+
+    <main id="appScreen" class="app hidden">
+
+        <!-- HEADER -->
+
+        <header class="topbar">
+
+            <div class="brand">
+                <h1>CLASS 01SIFE002</h1>
+                <span>by Dika</span>
+            </div>
+
+            <button id="profileBtn" class="profile-button">
+                <span class="profile-icon">◉</span>
+                <span>Profile</span>
+            </button>
+
+        </header>
+
+
+        <!-- HERO -->
+
+        <section class="hero-card">
+
+            <div>
+
+                <span class="eyebrow">
+                    CURRENT WEEK
+                </span>
+
+                <h2 id="weekTitle">
+                    WEEK 09
+                </h2>
+
+                <p id="weekDate">
+                    05 — 10 OKTOBER 2026
+                </p>
+
+            </div>
+
+            <div class="hero-progress">
+
+                <div class="progress-ring">
+                    <span id="overallPercent">
+                        0%
+                    </span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SUMMARY -->
+
+        <section class="summary-grid">
+
+            <div class="summary-card">
+                <span>Total</span>
+                <strong id="totalTasks">0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Selesai</span>
+                <strong id="completedTasks">0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Belum</span>
+                <strong id="remainingTasks">0</strong>
+            </div>
+
+        </section>
+
+
+        <!-- ADMIN BAR -->
+
+        <section id="adminPanel" class="admin-panel hidden">
+
+            <div>
+                <strong>Admin Mode</strong>
+                <span>Kelola tugas dan mata kuliah</span>
+            </div>
+
+            <div class="admin-actions">
+
+                <button id="addSubjectBtn">
+                    + Subject
+                </button>
+
+                <button id="addTaskBtn">
+                    + Task
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- SUBJECTS -->
+
+        <section>
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="eyebrow">
+                        TASKS
+                    </span>
+
+                    <h2>Mata Kuliah</h2>
+                </div>
+
+            </div>
+
+            <div id="subjectsContainer" class="subjects-container"></div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= PROFILE MODAL ================= -->
+
+    <div id="profileModal" class="modal hidden">
+
+        <div class="modal-card">
+
+            <div class="modal-header">
+
+                <div>
+                    <span class="eyebrow">ACCOUNT</span>
+                    <h2>Profile</h2>
+                </div>
+
+                <button class="close-btn" data-close="profileModal">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="profile-info">
+
+                <div class="profile-row">
+                    <span>Nama</span>
+                    <strong id="profileName">-</strong>
+                </div>
+
+                <div class="profile-row">
+                    <span>NIM</span>
+                    <strong id="profileNim">-</strong>
+                </div>
+
+                <div class="profile-row">
+                    <span>WhatsApp</span>
+                    <strong id="profileWhatsapp">-</strong>
+                </div>
+
+                <div class="profile-row">
+                    <span>Reminder</span>
+                    <strong id="profileReminder">OFF</strong>
+                </div>
+
+            </div>
+
+
+            <hr>
+
+
+            <label>WhatsApp</label>
+
+            <input
+                type="tel"
+                id="profileWhatsappInput"
+                placeholder="628xxxxxxxxxx"
+            >
+
+
+            <label class="check-row">
+
+                <input
+                    type="checkbox"
+                    id="profileReminderInput"
+                >
+
+                <span>
+                    Aktifkan reminder WhatsApp
+                </span>
+
+            </label>
+
+
+            <label>Jadwal Reminder</label>
+
+            <div class="schedule-options">
+
+                <label class="schedule-option">
+
+                    <input
+                        type="radio"
+                        name="schedule"
+                        value="thursday_20"
+                    >
+
+                    <span>
+                        Kamis 20.00
+                    </span>
+
+                </label>
+
+
+                <label class="schedule-option">
+
+                    <input
+                        type="radio"
+                        name="schedule"
+                        value="friday_06"
+                        checked
+                    >
+
+                    <span>
+                        Jumat 06.00
+                    </span>
+
+                </label>
+
+            </div>
+
+
+            <label>Tema</label>
+
+            <div class="theme-options">
+
+                <button data-theme="dark">
+                    Dark
+                </button>
+
+                <button data-theme="light">
+                    Light
+                </button>
+
+                <button data-theme="amoled">
+                    AMOLED
+                </button>
+
+            </div>
+
+
+            <label class="wallpaper-button">
+
+                <span>Ganti Wallpaper</span>
+
+                <input
+                    type="file"
+                    id="wallpaperInput"
+                    accept="image/*"
+                    hidden
+                >
+
+            </label>
+
+
+            <div class="modal-actions">
+
+                <button
+                    id="saveProfileBtn"
+                    class="primary-btn"
+                >
+                    Simpan
+                </button>
+
+                <button
+                    id="logoutBtn"
+                    class="danger-btn"
+                >
+                    Logout
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= TASK MODAL ================= -->
+
+    <div id="taskModal" class="modal hidden">
+
+        <div class="modal-card">
+
+            <div class="modal-header">
+
+                <div>
+                    <span class="eyebrow">ADMIN</span>
+                    <h2 id="taskModalTitle">
+                        Tambah Task
+                    </h2>
+                </div>
+
+                <button class="close-btn" data-close="taskModal">
+                    ×
+                </button>
+
+            </div>
+
+            <input type="hidden" id="editTaskId">
+
+            <label>Mata Kuliah</label>
+
+            <select id="taskSubject"></select>
+
+
+            <label>Nama Task</label>
+
+            <input
+                type="text"
+                id="taskName"
+                placeholder="Contoh: Pretest P9"
+            >
+
+
+            <label>Minggu</label>
+
+            <input
+                type="text"
+                id="taskWeek"
+                placeholder="Contoh: week-09"
+                value="week-09"
+            >
+
+
+            <div class="modal-actions">
+
+                <button
+                    id="saveTaskBtn"
+                    class="primary-btn"
+                >
+                    Simpan Task
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= SUBJECT MODAL ================= -->
+
+    <div id="subjectModal" class="modal hidden">
+
+        <div class="modal-card">
+
+            <div class="modal-header">
+
+                <div>
+                    <span class="eyebrow">ADMIN</span>
+                    <h2>Tambah Subject</h2>
+                </div>
+
+                <button class="close-btn" data-close="subjectModal">
+                    ×
+                </button>
+
+            </div>
+
+            <label>Nama Mata Kuliah</label>
+
+            <input
+                type="text"
+                id="subjectName"
+                placeholder="Contoh: Sistem Basis Data"
+            >
+
+            <label>SKS</label>
+
+            <select id="subjectSks">
+
+                <option value="2">
+                    2 SKS
+                </option>
+
+                <option value="3">
+                    3 SKS
+                </option>
+
+            </select>
+
+
+            <div class="modal-actions">
+
+                <button
+                    id="saveSubjectBtn"
+                    class="primary-btn"
+                >
+                    Simpan Subject
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FIREBASE -->
+
+    <script type="module" src="script.js"></script>
+
+</body>
+</html>
